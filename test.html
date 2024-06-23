@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Random Meme Generator</title>
+    <link rel="stylesheet" href="meme.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1 id="mainTitle">Dank Meme Generator!</h1>
+      <input type="text" id="ImageUrl" placeholder="Enter Image URL">
+      <input type="text" id="TopText" placeholder="Top Text">
+      <input type="text" id="BottomText" placeholder="Bottom Text">
+      <button onclick="displayImage()">Generate Meme</button>
+      <div class="image-preview" id="display-images"></div>
+  </div>
+    </div>
+    <script>
+      // JavaScript (meme.js)
+
+// Function to remove the canvas (image) when the delete button is clicked
+function removeImage(canvas) {
+  canvas.parentNode.removeChild(canvas);
+}
+
+// JavaScript (meme.js)
+
+function displayImage() {
+  const imageUrl = document.getElementById("ImageUrl").value;
+  const topText = document.getElementById("TopText").value;
+  const bottomText = document.getElementById("BottomText").value;
+
+  const imagePreview = document.getElementById("display-images");
+
+  const img = new Image();
+  img.src = imageUrl;
+
+  img.onload = function () {
+    const canvas = document.createElement("canvas");
+    const maxWidth = document.documentElement.clientWidth - 40; // Account for padding
+    const maxHeight = document.documentElement.clientHeight - 220; // Account for other elements
+    const scale = Math.min(maxWidth / img.width, maxHeight / img.height);
+
+    canvas.width = img.width * scale;
+    canvas.height = img.height * scale;
+    const ctx = canvas.getContext("2d");
+
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+    // Add text on top
+    ctx.fillStyle = "white";
+    ctx.font = "bold 20px Arial";
+    ctx.textAlign = "center";
+
+    //text width for scaling
+    const topTextWidth = ctx.measureText(topText).width;
+    const bottomTextWidth = ctx.measureText(bottomText).width;
+    const textScale = Math.min(
+      canvas.width / topTextWidth,
+      canvas.width / bottomTextWidth
+    );
+    const scaledFontSize = 20 * textScale;
+
+    // Set scaled font size
+    ctx.font = "bold " + scaledFontSize + "px Arial";
+
+    // Add text on top
+    ctx.fillText(topText, canvas.width / 2, canvas.height * 0.2);
+
+    // Add text at the bottom
+    ctx.fillText(bottomText, canvas.width / 2, canvas.height * 0.9);
+
+    // Append canvas to image preview
+    imagePreview.appendChild(canvas);
+
+    // Create delete button
+    const deleteButton = document.createElement("button");
+    deleteButton.innerHTML = "❌";
+    deleteButton.classList.add("delete-button");
+    deleteButton.onclick = function() {
+      removeImage(canvas); // Remove the canvas when delete button is clicked
+    };
+
+    // Append delete button to canvas
+    canvas.insertAdjacentElement('afterend', deleteButton);
+  };
+
+  img.onerror = function () {
+    imagePreview.innerHTML = "Error loading image.";
+  };
+}
+
+// Function to remove the canvas (image) when the delete button is clicked
+function removeImage(canvas) {
+  canvas.remove();
+}
+
+
+    </script>
+  </body>
+</html>
